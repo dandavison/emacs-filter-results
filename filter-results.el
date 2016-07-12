@@ -78,6 +78,22 @@ With prefix argument, retain non-matching lines."
 
 
 (defun filter-results-helm-action (&optional ignored)
+  "A function to be used as a helm action.
+
+  Use something like this (untested):
+
+  (helm-add-action-to-source
+   \"Open in `search-files-mode'\"
+   'dan/helm-search-files-mode-action
+   helm-source-grep)
+
+  With helm-projectile, use something like this if someone pulls
+  the actions out into a customizable variable:
+
+  (setq helm-projectile-actions
+        (append helm-projectile-actions
+                '(\"`helm-filter-mode'\"
+                  helm-filter-mode-action)))"
   (switch-to-buffer filter-results-buffer)
   (let ((buffer-read-only nil))
     (delete-region (point-min) (point-max))
