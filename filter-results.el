@@ -21,14 +21,14 @@
   (add-hook 'compilation-finish-functions
             'filter-results-clean-up-compilation-buffer nil t))
 
-(define-key filter-results-mode-map "/" 'filter-results-filter-results)
+(define-key filter-results-mode-map "/" 'filter-results)
 (define-key filter-results-mode-map [(control /)] 'filter-results-undo)
 (define-key filter-results-mode-map "\C-k" 'filter-results-kill-line)
 (define-key filter-results-mode-map "\C-_" 'filter-results-undo)
 (define-key filter-results-mode-map "\C-xu" 'filter-results-undo)
 (define-key filter-results-mode-map [(super z)] 'filter-results-undo)
 
-(defun filter-results-filter-results (&optional arg)
+(defun filter-results (&optional arg)
   "Filter search results, retaining matching lines.
 
 With prefix argument, retain non-matching lines."
