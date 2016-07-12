@@ -6,6 +6,8 @@
 
 (require 'cl)
 
+(defvar filter-results-buffer "*Filter Results*")
+
 (defvar filter-results-mode-map (make-sparse-keymap))
 
 (defvar filter-results-max-line-width 300
@@ -74,8 +76,6 @@ With prefix argument, retain non-matching lines."
                          (point-at-bol))
                        (point))))))
 
-
-(defvar filter-results-buffer "*Filter Results*")
 
 (defun filter-results-helm-action (&optional ignored)
   (switch-to-buffer filter-results-buffer)
