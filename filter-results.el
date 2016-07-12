@@ -6,58 +6,58 @@
 
 (require 'cl)
 
-(defvar search-files-mode-map (make-sparse-keymap))
+(defvar filter-results-mode-map (make-sparse-keymap))
 
-(defvar search-files-max-line-width 300
+(defvar filter-results-max-line-width 300
   "Output lines will be truncated to this width to avoid slowing down emacs")
 
-(define-derived-mode search-files-mode
-  compilation-mode "search-files"
-  "Major mode for search-files results buffer.
-\\{search-files-mode-map}"
+(define-derived-mode filter-results-mode
+  compilation-mode "filter-results"
+  "Major mode for filter-results results buffer.
+\\{filter-results-mode-map}"
 
   (add-hook 'compilation-finish-functions
-            'search-files-clean-up-compilation-buffer nil t))
+            'filter-results-clean-up-compilation-buffer nil t))
 
-(define-key search-files-mode-map "/" 'search-files-filter-results)
-(define-key search-files-mode-map [(control /)] 'search-files-undo)
-(define-key search-files-mode-map "\C-k" 'search-files-kill-line)
-(define-key search-files-mode-map "\C-_" 'search-files-undo)
-(define-key search-files-mode-map "\C-xu" 'search-files-undo)
-(define-key search-files-mode-map [(super z)] 'search-files-undo)
+(define-key filter-results-mode-map "/" 'filter-results-filter-results)
+(define-key filter-results-mode-map [(control /)] 'filter-results-undo)
+(define-key filter-results-mode-map "\C-k" 'filter-results-kill-line)
+(define-key filter-results-mode-map "\C-_" 'filter-results-undo)
+(define-key filter-results-mode-map "\C-xu" 'filter-results-undo)
+(define-key filter-results-mode-map [(super z)] 'filter-results-undo)
 
-(defun search-files-filter-results (&optional arg)
+(defun filter-results-filter-results (&optional arg)
   "Filter search results, retaining matching lines.
 
 With prefix argument, retain non-matching lines."
   (interactive "P")
-  (search-files-do-in-results-buffer
+  (filter-results-do-in-results-buffer
    (if arg 'delete-matching-lines 'delete-non-matching-lines) 'from-beginning))
 
-(defun search-files-kill-line ()
+(defun filter-results-kill-line ()
   "Kill line in search results buffer"
   (interactive)
-  (search-files-do-in-results-buffer 'kill-line))
+  (filter-results-do-in-results-buffer 'kill-line))
 
-(defun search-files-undo ()
+(defun filter-results-undo ()
   "Undo in search results buffer"
   (interactive)
-  (search-files-do-in-results-buffer 'undo))
+  (filter-results-do-in-results-buffer 'undo))
 
-(defun search-files-do-in-results-buffer (fn &optional do-from-beginning)
+(defun filter-results-do-in-results-buffer (fn &optional do-from-beginning)
   (let ((buffer-read-only nil))
     (save-excursion
       (when do-from-beginning (goto-char (point-min)))
       (call-interactively fn))))
 
-(defun search-files-truncate-lines (string)
-  "Truncates lines to `search-files-max-line-width'"
+(defun filter-results-truncate-lines (string)
+  "Truncates lines to `filter-results-max-line-width'"
   (mapconcat
-   (lambda (line) (truncate-string-to-width line search-files-max-line-width))
+   (lambda (line) (truncate-string-to-width line filter-results-max-line-width))
    (split-string string "[\n\r]+")
    "\n"))
 
-(defun search-files-clean-up-compilation-buffer (&optional buf ignored)
+(defun filter-results-clean-up-compilation-buffer (&optional buf ignored)
   (with-current-buffer (or buf (current-buffer))
     (let ((buffer-read-only nil)
           (grep-match-re "^[^: ]+:[0-9]+:"))
@@ -74,20 +74,19 @@ With prefix argument, retain non-matching lines."
                          (point-at-bol))
                        (point))))))
 
-(require 'helm)
 
-(defvar helm-filter-mode-buffer "*helm filter*")
+(defvar filter-results-buffer "*Filter Results*")
 
-(defun helm-filter-mode-action (-ignored)
-  (switch-to-buffer helm-filter-mode-buffer)
+(defun filter-results-helm-action (&optional ignored)
+  (switch-to-buffer filter-results-buffer)
   (let ((buffer-read-only nil))
     (delete-region (point-min) (point-max))
     (insert
      (with-current-buffer helm-last-buffer
-       (search-files-truncate-lines (buffer-string))))
+       (filter-results-truncate-lines (buffer-string))))
     (goto-char (point-min))
-    (search-files-clean-up-compilation-buffer)
-    (search-files-mode)))
+    (filter-results-clean-up-compilation-buffer)
+    (filter-results-mode)))
 
-(provide 'search-files)
-;;; search-files.el ends here
+(provide 'filter-results)
+;;; filter-results.el ends here
